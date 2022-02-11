@@ -1,22 +1,25 @@
 const express = require('express');
-const cors = require('cors');
+// const cors = require('cors');
 const ArticleInfo = require('./src/model/BlogDB');
 
 
 
 // Object initialization
 const app = express();
-app.use(cors());
+// app.use(cors());
 // For Post Method
+//instead of body parser, use this to read data from body for post method
+//body means in the site, white space like comments we write
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
+const path = require('path')
+app.use(express.static('./build/'));
 
 // Basic Article Fetch Route (Back-end Routing)
 app.get('/api/article/:name', (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+    // res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
     try {
         const articleName = req.params.name;
         ArticleInfo.findOne({ name: articleName })
@@ -45,8 +48,6 @@ app.post('/api/article/:name/upvotes', (req, res) => {
 })
 
 
-
-
 // Comments Routing
 app.post('/api/article/:name/comments', (req, res) => {
     const articleName = req.params.name;
@@ -61,6 +62,9 @@ app.post('/api/article/:name/comments', (req, res) => {
 
 
 
+app.get('/*', function(req, res) {
+    res.sendFile(path.join(__dirname + '/build/index.html'))
+   });
 
 
 // Port number
